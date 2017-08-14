@@ -54,7 +54,8 @@
         </el-table-column>
         <el-table-column label="是否缴费" width="100">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.is_fee }}</span>
+            <span style="margin-left: 10px" v-if="scope.row.is_fee==0">未交费</span>
+            <span style="margin-left: 10px" v-else>已缴费</span>
           </template>
         </el-table-column>
         <el-table-column label="缴费时间" width="120">
@@ -85,7 +86,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="缴费项:" prop="limit">
-          <el-select v-model="recordForm.isList" placeholder="请选择..." style="width: 100%" multiple>
+          <el-select v-model="recordForm.isLimit" placeholder="请选择..." style="width: 100%" multiple>
             <el-option label="已缴费" value="0"></el-option>
             <el-option label="未交费" value="1"></el-option>
           </el-select>
@@ -132,7 +133,7 @@
         recordModal: false,
         recordForm: {
           classNames: [],
-          isList: []
+          isLimit: []
         }
       }
     },
@@ -152,9 +153,9 @@
       uploadSuccess (index) {
         console.log(index)
         if (index.code !== '200') {
-          this.messageRemind('error', index.messgae)
+          this.messageRemind('error', index.message)
         }
-        this.messageRemind('success', index.messgae)
+        this.messageRemind('success', index.message)
         this.initRecordListData(this.recordListData)
       },
       // 下载名单
@@ -167,11 +168,13 @@
         if (this.recordForm.classNames.length === 0) {
           this.messageRemind('warning', '请选择班级！')
         }
-        if (this.recordForm.isList.length === 0) {
+        if (this.recordForm.isLimit.length === 0) {
           this.messageRemind('warning', '请选择缴费项！')
         }
-        window.open('http://localhost:30000/win/schoolfee/v1/record/download?access_token=' + localStorage.getItem('positionAccessToken') + '&class_names=' + this.recordForm.classNames.join(',') + '&is_fees=' + this.recordForm.isList.join(','))
+        window.open('http://localhost:30000/win/schoolfee/v1/record/download?access_token=' + localStorage.getItem('positionAccessToken') + '&class_names=' + this.recordForm.classNames.join(',') + '&is_fees=' + this.recordForm.isLimit.join(','))
         this.recordModal = false
+        this.recordForm.classNames = []
+        this.recordForm.isLimit = []
       },
       handleSizeChange (val) {
         this.initRecordListData(this.recordListData)
@@ -199,7 +202,7 @@
             }).then(function (response) {
               if (response.data.code === '200') {
                 current.initRecordListData(current.recordListData)
-                current.messageRemind('success', response.data.messgae)
+                current.messageRemind('success', response.data.message)
               }
             }).catch(function (error) {
               console.log(error)
@@ -218,6 +221,10 @@
           return
         }
         for (var i = 0; i < data.length; i++) {
+          if (data[i]['is_fee'] !== 0) {
+            this.$message({type: 'info', message: '已缴费数据不得删除！'})
+            return
+          }
           ids.push(data[i]['id'])
         }
         return ids

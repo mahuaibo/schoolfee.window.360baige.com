@@ -166,10 +166,10 @@
           }
         }).then(function (response) {
           console.log(response.data)
-          if (response.data === '200') {
+          if (response.data.code === '200') {
             current.initSchoolFeeListData(current.schoolFeeListData)
             current.schoolFeeModal = false
-            current.messageRemind('success', response.data.messgae)
+            current.messageRemind('success', response.data.message)
           }
         }).catch(function (error) {
           console.log(error)
