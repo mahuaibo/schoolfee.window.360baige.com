@@ -10,7 +10,7 @@
                    :action="uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
           <el-button slot="trigger" type="text">上传名单</el-button>
           <el-button style="margin-left: 10px;" type="text" @click="downloadList">下载名单</el-button>
-          <el-button style="margin-left: 10px;color: red;" type="text" @click="deletePersonnel">删除</el-button>
+          <el-button style="margin-left: 10px;color: red;" type="text" @click="deleteRecord">删除</el-button>
         </el-upload>
       </div>
     </div>
@@ -183,7 +183,7 @@
         this.initRecordListData(this.recordListData)
       },
       // 删除
-      deletePersonnel () {
+      deleteRecord () {
         var current = this
         var ids = this.getTheSelectedIds()
         if (ids) {
