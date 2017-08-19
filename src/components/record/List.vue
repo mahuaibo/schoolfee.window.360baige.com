@@ -154,6 +154,7 @@
         console.log(index)
         if (index.code !== '200') {
           this.messageRemind('error', index.message)
+          return
         }
         this.messageRemind('success', index.message)
         this.initRecordListData(this.recordListData)
