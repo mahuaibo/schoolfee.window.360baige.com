@@ -12,6 +12,8 @@
           <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
 
 
+
+
           </el-button>
           <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
@@ -66,7 +68,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination class="comtent-paging" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+    </div>
+    <div class="comtent-paging">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page.sync="recordListData.current" :page-sizes="[50, 100, 200]"
                      :page-size="recordListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
                      :total="recordListData.total">
@@ -255,10 +259,11 @@
   .comtent-list {
     height: calc(100vh - 210px);
     overflow: scroll;
-    .comtent-paging {
-      float: right;
-      padding: 30px 0px 0px 0px;
-    }
+  }
+
+  .comtent-paging {
+    float: right;
+    padding: 30px 0px 0px 0px;
   }
 
   .el-icon-arrow-left {

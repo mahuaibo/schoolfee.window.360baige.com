@@ -39,7 +39,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination class="comtent-paging" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+    </div>
+    <div class="comtent-paging">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page.sync="schoolFeeListData.current" :page-sizes="[50, 100, 200]"
                      :page-size="schoolFeeListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
                      :total="schoolFeeListData.total">
