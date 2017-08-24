@@ -1,8 +1,8 @@
 <template>
   <div class="common-header">
-    <div class="el-menu-demo el-menu-demo-right">
-      <el-button @click="returnAppCenter">应用中心</el-button>
-    </div>
+    <!--<div class="el-menu-demo el-menu-demo-right">-->
+      <!--<el-button @click="returnAppCenter">应用中心</el-button>-->
+    <!--</div>-->
   </div>
 </template>
 

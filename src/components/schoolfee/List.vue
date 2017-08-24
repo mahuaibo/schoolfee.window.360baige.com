@@ -1,13 +1,13 @@
 <template>
   <div class="index">
     <div class="content-head">
-      <el-button type="text" @click="addSchoolFee">新增</el-button>
+      <el-button type="primary" style="width: 86px;height: 36px;" @click="addSchoolFee">新增</el-button>
     </div>
-    <div class="comtent-list">
-      <el-table :data="schoolFeeData.list" border>
+    <div class="comtent-list" style="text-align: left;">
+      <el-table :data="schoolFeeData.list">
         <el-table-column label="创建时间" width="160">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.create_time }}</span>
+            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="项目名称" width="140">
@@ -21,7 +21,7 @@
             <span style="margin-left: 10px" v-else>停用</span>
           </template>
         </el-table-column>
-        <el-table-column label="描述" width="180">
+        <el-table-column label="描述" width="200">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.desc }}</span>
           </template>
@@ -39,13 +39,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="comtent-paging">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                       :current-page.sync="schoolFeeListData.current" :page-sizes="[50, 100, 200]"
-                       :page-size="schoolFeeListData.pageSize" layout="sizes, prev, pager, next"
-                       :total="schoolFeeListData.total">
-        </el-pagination>
-      </div>
+      <el-pagination class="comtent-paging" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                     :current-page.sync="schoolFeeListData.current" :page-sizes="[50, 100, 200]"
+                     :page-size="schoolFeeListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                     :total="schoolFeeListData.total">
+      </el-pagination>
     </div>
     <el-dialog title="新增" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false">
       <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px">
@@ -88,7 +86,8 @@
     },
     computed: {
       ...mapGetters([
-        'schoolFeeData'
+        'schoolFeeData',
+        'publicParameters'
       ])
     },
     data () {
@@ -131,12 +130,12 @@
       },
       // 新增收费项目
       addSchoolFee () {
-        this.schoolFeeForm.url = 'http://localhost:30000/win/schoolfee/v1/project/add'
+        this.schoolFeeForm.url = this.publicParameters.path + '/project/add'
         this.schoolFeeModal = true
       },
       // 修改收费项目
       schoolFeeModify (index) {
-        this.schoolFeeForm.url = 'http://localhost:30000/win/schoolfee/v1/project/modify'
+        this.schoolFeeForm.url = this.publicParameters.path + '/project/modify'
         this.schoolFeeForm.id = index.id
         this.schoolFeeForm.name = index.name
         this.schoolFeeForm.limit = index.is_limit + ''
@@ -147,6 +146,7 @@
       },
       // 名单跳转
       getRecordList (index) {
+        console.log(index)
         router.push('/record/list?i=' + index.id + '&n=' + index.name)
       },
       // 表单提交
@@ -156,7 +156,7 @@
           method: 'POST',
           url: this.schoolFeeForm.url,
           params: {
-            access_token: localStorage.getItem('positionAccessToken'),
+            access_token: localStorage.getItem('accessToken'),
             id: this.schoolFeeForm.id,
             name: this.schoolFeeForm.name,
             is_limit: this.schoolFeeForm.limit,
@@ -183,14 +183,24 @@
   }
 </script>
 <style lang="scss" scoped>
+  .index {
+    margin: 0px 192px 0px 192px;
+  }
+
   .content-head {
-    width: 60px;
-    margin: 10px;
+    text-align: left;
+    height: 36px;
+    margin-top: 32px;
+    margin-bottom: 30px;
+  }
+
+  .comtent-list {
+    height: calc(100vh - 210px);
+    overflow: scroll;
   }
 
   .comtent-paging {
-    padding-top: 20px;
-    position: absolute;
-    right: 20px;
+    float: right;
+    padding: 30px 0px 0px 0px;
   }
 </style>

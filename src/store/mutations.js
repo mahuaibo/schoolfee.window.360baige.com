@@ -4,17 +4,17 @@ import axios from 'axios'
 export const initSchoolFeeListData = (state, index, row) => {
   state.schoolFeeData.list = []
   axios({
-    method: 'GET',
-    url: 'http://localhost:30000/win/schoolfee/v1/project/list',
+    method: 'POST',
+    url: state.publicParameters.path + '/project/list',
     params: {
-      access_token: localStorage.getItem('positionAccessToken'),
-      page_size: index.pageSize,
+      accessToken: localStorage.getItem('accessToken'),
+      pageSize: index.pageSize,
       current: index.current
     }
   }).then(function (response) {
     console.log(response.data)
     if (response.data.code === '200') {
-      state.schoolFeeData.list = response.data.data.List
+      state.schoolFeeData.list = response.data.data.list
     }
   }).catch(function (error) {
     console.log(error)
@@ -25,18 +25,18 @@ export const initSchoolFeeListData = (state, index, row) => {
 export const initRecordListData = (state, index, row) => {
   state.recordData.list = []
   axios({
-    method: 'GET',
-    url: 'http://localhost:30000/win/schoolfee/v1/record/list',
+    method: 'POST',
+    url: state.publicParameters.path + '/record/list',
     params: {
-      access_token: localStorage.getItem('positionAccessToken'),
-      project_id: index.projectId,
-      page_size: index.pageSize,
+      accessToken: localStorage.getItem('accessToken'),
+      projectId: index.projectId,
+      pageSize: index.pageSize,
       current: index.current
     }
   }).then(function (response) {
     console.log(response.data)
     if (response.data.code === '200') {
-      state.recordData.list = response.data.data.List
+      state.recordData.list = response.data.data.list
     }
   }).catch(function (error) {
     console.log(error)
@@ -47,11 +47,11 @@ export const initRecordListData = (state, index, row) => {
 export const initClassListData = (state, index, row) => {
   state.recordData.classList = []
   axios({
-    method: 'GET',
-    url: 'http://localhost:30000/win/schoolfee/v1/record/classList',
+    method: 'POST',
+    url: state.publicParameters.path + '/record/classList',
     params: {
-      access_token: localStorage.getItem('positionAccessToken'),
-      project_id: index.projectId
+      accessToken: localStorage.getItem('accessToken'),
+      projectId: index.projectId
     }
   }).then(function (response) {
     console.log(response.data)

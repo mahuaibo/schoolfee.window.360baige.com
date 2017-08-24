@@ -7,60 +7,57 @@
       </div>
       <div class="content-head-right">
         <el-upload class="upload-demo" name="uploadFile" accept=".xlsx"
-                   :action="uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
-          <el-button slot="trigger" type="text">上传名单</el-button>
-          <el-button style="margin-left: 10px;" type="text" @click="downloadList">下载名单</el-button>
-          <el-button style="margin-left: 10px;color: red;" type="text" @click="deleteRecord">删除</el-button>
+                   :action="publicParameters.path + uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
+          <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;">上传名单</el-button>
+          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
+
+
+          </el-button>
+          <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
       </div>
     </div>
-    <div class="comtent-list">
-      <el-table :data="recordData.list" border @selection-change="setIds">
+    <div class="comtent-list" style="text-align: left">
+      <el-table :data="recordData.list" @selection-change="setIds">
         <el-table-column type="selection" width="45"></el-table-column>
-        <el-table-column label="创建时间" width="120">
+        <el-table-column label="创建时间" width="160">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.create_time }}</span>
+            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="姓名" width="100">
+        <el-table-column label="班级" width="140">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+            <span style="margin-left: 10px">{{ scope.row.className }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="班级" width="100">
+        <el-table-column label="姓名" width="120">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.class_name }}</span>
+            <el-popover trigger="hover" placement="top">
+              <p>姓名: {{ scope.row.name }}</p>
+              <p>学号: {{ scope.row.num }}</p>
+              <p>联系电话: {{ scope.row.phone }}</p>
+              <p>身份证号: {{ scope.row.idCard }}</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag>{{ scope.row.name }}</el-tag>
+              </div>
+            </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="身份证号码" width="160">
-          <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.id_card }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="学号" width="120">
-          <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.num }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="联系电话" width="140">
-          <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.phone }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="应缴费用" width="100">
+        <el-table-column label="应缴费用" width="120">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.price }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="是否缴费" width="100">
+        <el-table-column label="是否缴费" width="120">
           <template scope="scope">
             <span style="margin-left: 10px" v-if="scope.row.is_fee==0">未交费</span>
             <span style="margin-left: 10px" v-else>已缴费</span>
           </template>
         </el-table-column>
-        <el-table-column label="缴费时间" width="120">
+        <el-table-column label="缴费时间" width="160">
           <template scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.fee_time }}</span>
+            <span style="margin-left: 10px" v-if="scope.row.feeTime==0">未交费</span>
+            <span style="margin-left: 10px" v-else>{{ scope.row.feeTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -69,13 +66,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="comtent-paging">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                       :current-page.sync="recordListData.current" :page-sizes="[50, 100, 200]"
-                       :page-size="recordListData.pageSize" layout="sizes, prev, pager, next"
-                       :total="recordListData.total">
-        </el-pagination>
-      </div>
+      <el-pagination class="comtent-paging" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                     :current-page.sync="recordListData.current" :page-sizes="[50, 100, 200]"
+                     :page-size="recordListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                     :total="recordListData.total">
+      </el-pagination>
     </div>
     <el-dialog title="下载筛选" :visible.sync="recordModal" @click="this.recordModal = false">
       <el-form :model="recordForm" ref="recordForm" label-width="100px">
@@ -109,14 +104,15 @@
     },
     computed: {
       ...mapGetters([
-        'recordData'
+        'recordData',
+        'publicParameters'
       ])
     },
     data () {
       return {
         projectName: this.$route.query.n + ':名单',
         ids: [],
-        uploadUrl: 'http://localhost:30000/win/schoolfee/v1/record/upload?a=' + localStorage.getItem('positionAccessToken') + '&i=' + this.$route.query.i,
+        uploadUrl: '/record/upload?a=' + localStorage.getItem('accessToken') + '&i=' + this.$route.query.i,
         recordListData: {
           projectId: this.$route.query.i,
           pageSize: 50,
@@ -172,7 +168,7 @@
         if (this.recordForm.isLimit.length === 0) {
           this.messageRemind('warning', '请选择缴费项！')
         }
-        window.open('http://localhost:30000/win/schoolfee/v1/record/download?access_token=' + localStorage.getItem('positionAccessToken') + '&class_names=' + this.recordForm.classNames.join(',') + '&is_fees=' + this.recordForm.isLimit.join(','))
+        window.open(this.publicParameters.path + '/record/download?accessToken=' + localStorage.getItem('accessToken') + '&class_names=' + this.recordForm.classNames.join(',') + '&is_fees=' + this.recordForm.isLimit.join(','))
         this.recordModal = false
         this.recordForm.classNames = []
         this.recordForm.isLimit = []
@@ -195,9 +191,9 @@
           }).then(() => {
             axios({
               method: 'POST',
-              url: 'http://localhost:30000/win/schoolfee/v1/record/delete',
+              url: this.publicParameters.path + '/record/delete',
               params: {
-                access_token: localStorage.getItem('positionAccessToken'),
+                access_token: localStorage.getItem('accessToken'),
                 record_ids: ids.join(',')
               }
             }).then(function (response) {
@@ -238,27 +234,36 @@
   }
 </script>
 <style lang="scss" scoped>
+  .index {
+    margin: 0px 192px 0px 192px;
+  }
+
   .content-head {
-    margin: 10px;
-    font-size: 14px;
+    margin-top: 32px;
+    margin-bottom: 30px;
+    height: 36px;
     .content-head-left {
       float: left;
+      height: 36px;
+      line-height: 36px;
     }
     .content-head-right {
       float: right;
-      margin-right: 15px;
     }
   }
 
-  .comtent-paging {
-    padding-top: 20px;
-    position: absolute;
-    right: 20px;
+  .comtent-list {
+    height: calc(100vh - 210px);
+    overflow: scroll;
+    .comtent-paging {
+      float: right;
+      padding: 30px 0px 0px 0px;
+    }
   }
 
   .el-icon-arrow-left {
     margin-right: 20px;
-    color: #4db3ff;
+    color: #20a0ff;
     cursor: pointer;
   }
 </style>
