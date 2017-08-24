@@ -197,12 +197,12 @@
   }
 
   .comtent-list {
-    height: calc(100vh - 210px);
+    max-height: calc(100vh - 230px);
     overflow: scroll;
   }
 
   .comtent-paging {
     float: right;
-    padding: 30px 0px 0px 0px;
+    padding-top: 30px;
   }
 </style>

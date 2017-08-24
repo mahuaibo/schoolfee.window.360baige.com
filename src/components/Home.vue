@@ -31,24 +31,24 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  .layout-sidebar-header {
-    background: #324157;
-    height: 78px;
-    width: 100%;
-    min-width: 1080px;
-    position: absolute;
-    left: 0;
-    .header-left-image {
-      float: left;
-      padding-left: 192px;
+  .layout {
+    .layout-sidebar-header {
+      background: #324157;
+      height: 78px;
+      width: 100%;
+      min-width: 1080px;
+      position: absolute;
+      left: 0;
+      .header-left-image {
+        float: left;
+        padding-left: 192px;
+      }
     }
-  }
 
-  .layout-container {
-    background: white;
-    min-width: 1080px;
-    height: calc(100vh - 100px);
-    /*overflow: scroll;*/
-    padding-top: 78px;
+    .layout-container {
+      background: white;
+      min-width: 1080px;
+      padding-top: 78px;
+    }
   }
 </style>
