@@ -1,3 +1,13 @@
+<style>
+  .el-table th {
+    text-align: center;
+  }
+
+  .el-checkbox__inner {
+    width: 14px;
+    height: 14px;
+  }
+</style>
 <template>
   <div class="index">
     <div class="content-head">
@@ -8,20 +18,19 @@
       <div class="content-head-right">
         <el-upload class="upload-demo" name="uploadFile" accept=".xlsx"
                    :action="publicParameters.path + uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
-          <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;">上传名单</el-button>
+          <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;"
+                     v-if="this.$route.query.is==0">上传名单
+          </el-button>
           <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
-
-
-
 
           </el-button>
           <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
       </div>
     </div>
-    <div class="comtent-list" style="text-align: left">
-      <el-table :data="recordData.list" @selection-change="setIds">
-        <el-table-column type="selection" width="45"></el-table-column>
+    <div class="comtent-list" style="text-align: center">
+      <el-table :data="recordData.list" @selection-change="setIds" max-height="510">
+        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="创建时间" width="160">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
@@ -52,14 +61,13 @@
         </el-table-column>
         <el-table-column label="是否缴费" width="120">
           <template scope="scope">
-            <span style="margin-left: 10px" v-if="scope.row.is_fee==0">未交费</span>
+            <span style="margin-left: 10px" v-if="scope.row.isFee==0">未缴费</span>
             <span style="margin-left: 10px" v-else>已缴费</span>
           </template>
         </el-table-column>
         <el-table-column label="缴费时间" width="160">
           <template scope="scope">
-            <span style="margin-left: 10px" v-if="scope.row.feeTime==0">未交费</span>
-            <span style="margin-left: 10px" v-else>{{ scope.row.feeTime }}</span>
+            <span style="margin-left: 10px">{{ scope.row.feeTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -116,7 +124,7 @@
       return {
         projectName: this.$route.query.n + ':名单',
         ids: [],
-        uploadUrl: '/record/upload?a=' + localStorage.getItem('accessToken') + '&i=' + this.$route.query.i,
+        uploadUrl: '/record/upload?accessToken=' + localStorage.getItem('accessToken') + '&projectId=' + this.$route.query.i,
         recordListData: {
           projectId: this.$route.query.i,
           pageSize: 50,
@@ -162,7 +170,6 @@
       // 下载名单
       downloadList () {
         this.initClassListData(this.recordListData)
-        console.log('下载名单')
         this.recordModal = true
       },
       downloadSubmit () {
@@ -172,7 +179,7 @@
         if (this.recordForm.isLimit.length === 0) {
           this.messageRemind('warning', '请选择缴费项！')
         }
-        window.open(this.publicParameters.path + '/record/download?accessToken=' + localStorage.getItem('accessToken') + '&class_names=' + this.recordForm.classNames.join(',') + '&is_fees=' + this.recordForm.isLimit.join(','))
+        window.open(this.publicParameters.path + '/record/download?accessToken=' + localStorage.getItem('accessToken') + '&classNames=' + this.recordForm.classNames.join(',') + '&isFees=' + this.recordForm.isLimit.join(','))
         this.recordModal = false
         this.recordForm.classNames = []
         this.recordForm.isLimit = []
@@ -188,7 +195,7 @@
         var current = this
         var ids = this.getTheSelectedIds()
         if (ids) {
-          this.$confirm('确认删除此应用?', '提示', {
+          this.$confirm('确认删除?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -197,8 +204,8 @@
               method: 'POST',
               url: this.publicParameters.path + '/record/delete',
               params: {
-                access_token: localStorage.getItem('accessToken'),
-                record_ids: ids.join(',')
+                accessToken: localStorage.getItem('accessToken'),
+                recordIds: ids.join(',')
               }
             }).then(function (response) {
               if (response.data.code === '200') {
@@ -222,7 +229,7 @@
           return
         }
         for (var i = 0; i < data.length; i++) {
-          if (data[i]['is_fee'] !== 0) {
+          if (data[i]['isFee'] !== 0) {
             this.$message({type: 'info', message: '已缴费数据不得删除！'})
             return
           }
@@ -256,10 +263,10 @@
     }
   }
 
-  .comtent-list {
-    max-height: calc(100vh - 230px);
-    overflow: scroll;
-  }
+  /*.comtent-list {*/
+  /*max-height: calc(100vh - 230px);*/
+  /*overflow: scroll;*/
+  /*}*/
 
   .comtent-paging {
     float: right;

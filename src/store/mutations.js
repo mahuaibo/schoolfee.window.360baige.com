@@ -15,6 +15,9 @@ export const initSchoolFeeListData = (state, index, row) => {
     console.log(response.data)
     if (response.data.code === '200') {
       state.schoolFeeData.list = response.data.data.list
+      index.pageSize = response.data.data.pageSize
+      index.current = response.data.data.current
+      index.total = response.data.data.total
     }
   }).catch(function (error) {
     console.log(error)
@@ -37,6 +40,9 @@ export const initRecordListData = (state, index, row) => {
     console.log(response.data)
     if (response.data.code === '200') {
       state.recordData.list = response.data.data.list
+      index.pageSize = response.data.data.pageSize
+      index.current = response.data.data.current
+      index.total = response.data.data.total
     }
   }).catch(function (error) {
     console.log(error)

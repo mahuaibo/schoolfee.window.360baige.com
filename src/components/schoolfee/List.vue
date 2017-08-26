@@ -1,10 +1,49 @@
+<style lang="scss">
+  .el-dialog {
+    width: 456px;
+    .el-dialog__body {
+      padding: 6px 8px 6px 0px;
+    }
+    .el-form-item {
+      margin: 14px 14px 20px 14px;
+    }
+  }
+
+  .el-dialog__header {
+    background-color: #31a7ff;
+    padding: 0px;
+    margin: 0px;
+    height: 55px;
+    line-height: 60px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    text-align: left;
+    padding-left: 20px;
+    .el-dialog__title {
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: normal;
+    }
+    .el-dialog__headerbtn {
+      padding-top: 20px;
+      padding-right: 20px;
+      .el-icon-close {
+        color: #ffffff;
+      }
+    }
+  }
+
+  .el-table th {
+    text-align: center;
+  }
+</style>
 <template>
   <div class="index">
     <div class="content-head">
       <el-button type="primary" style="width: 86px;height: 36px;" @click="addSchoolFee">新增</el-button>
     </div>
-    <div class="comtent-list" style="text-align: left;">
-      <el-table :data="schoolFeeData.list">
+    <div class="comtent-list" style="text-align: center;">
+      <el-table :data="schoolFeeData.list" max-height="510">
         <el-table-column label="创建时间" width="160">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
@@ -13,6 +52,12 @@
         <el-table-column label="项目名称" width="140">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="限制缴费" width="160">
+          <template scope="scope">
+            <span style="margin-left: 10px" v-if="scope.row.isLimit==0">是</span>
+            <span style="margin-left: 10px" v-else>否</span>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="120">
@@ -26,12 +71,6 @@
             <span style="margin-left: 10px">{{ scope.row.desc }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="限制缴费" width="160">
-          <template scope="scope">
-            <span style="margin-left: 10px" v-if="scope.row.is_limit==0">是</span>
-            <span style="margin-left: 10px" v-else>否</span>
-          </template>
-        </el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
             <el-button type="text" size="small" @click="schoolFeeModify(scope.row)">修改</el-button>
@@ -41,22 +80,24 @@
       </el-table>
     </div>
     <div class="comtent-paging">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+      <el-pagination @size-change="pagingUpdatesData" @current-change="pagingUpdatesData"
                      :current-page.sync="schoolFeeListData.current" :page-sizes="[50, 100, 200]"
                      :page-size="schoolFeeListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
                      :total="schoolFeeListData.total">
       </el-pagination>
     </div>
-    <el-dialog title="新增" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false">
-      <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px">
+    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false">
+      <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px"
+               style="padding:0px 10px 0px 0px;">
         <el-form-item label="项目名称:" prop="name">
-          <el-input type="text" v-model="schoolFeeForm.name"></el-input>
+          <el-input type="text" placeholder="请输入项目名称..." v-model="schoolFeeForm.name"></el-input>
         </el-form-item>
         <el-form-item label="项目描述:" prop="desc">
-          <el-input type="text" v-model="schoolFeeForm.desc"></el-input>
+          <el-input type="textarea" :rows="3" placeholder="请输入项目描述..." v-model="schoolFeeForm.desc"
+                    resize="none"></el-input>
         </el-form-item>
         <el-form-item label="描述连接:" prop="link">
-          <el-input type="text" v-model="schoolFeeForm.link" number></el-input>
+          <el-input type="text" v-model="schoolFeeForm.link" placeholder="请输入描述连接..."></el-input>
         </el-form-item>
         <el-form-item label="限制缴费:" prop="limit">
           <el-select v-model="schoolFeeForm.limit" placeholder="请选择..." style="width: 100%">
@@ -71,7 +112,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button style="width:100%;float: right;" @click="schoolFeeSubmit('schoolFeeForm')">提交</el-button>
+          <el-button class="submit-button" @click="schoolFeeSubmit('schoolFeeForm')">提交</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -95,7 +136,7 @@
     data () {
       return {
         schoolFeeModal: false,
-        modalTitle: '标题',
+        dialogTitle: '标题',
         schoolFeeForm: {
           url: null,
           id: null,
@@ -121,10 +162,7 @@
       ...mapActions([
         'initSchoolFeeListData'
       ]),
-      handleSizeChange (val) {
-        this.initSchoolFeeListData(this.schoolFeeListData)
-      },
-      handleCurrentChange (val) {
+      pagingUpdatesData (val) {
         this.initSchoolFeeListData(this.schoolFeeListData)
       },
       filterTag (value, row) {
@@ -132,15 +170,17 @@
       },
       // 新增收费项目
       addSchoolFee () {
+        this.dialogTitle = '新增'
         this.schoolFeeForm.url = this.publicParameters.path + '/project/add'
         this.schoolFeeModal = true
       },
       // 修改收费项目
       schoolFeeModify (index) {
+        this.dialogTitle = '修改'
         this.schoolFeeForm.url = this.publicParameters.path + '/project/modify'
         this.schoolFeeForm.id = index.id
         this.schoolFeeForm.name = index.name
-        this.schoolFeeForm.limit = index.is_limit + ''
+        this.schoolFeeForm.limit = index.isLimit + ''
         this.schoolFeeForm.desc = index.desc
         this.schoolFeeForm.link = index.link
         this.schoolFeeForm.status = index.status + ''
@@ -149,7 +189,7 @@
       // 名单跳转
       getRecordList (index) {
         console.log(index)
-        router.push('/record/list?i=' + index.id + '&n=' + index.name)
+        router.push('/record/list?i=' + index.id + '&n=' + index.name + '&is=' + index.isLimit)
       },
       // 表单提交
       schoolFeeSubmit () {
@@ -158,10 +198,10 @@
           method: 'POST',
           url: this.schoolFeeForm.url,
           params: {
-            access_token: localStorage.getItem('accessToken'),
+            accessToken: localStorage.getItem('accessToken'),
             id: this.schoolFeeForm.id,
             name: this.schoolFeeForm.name,
-            is_limit: this.schoolFeeForm.limit,
+            isLimit: this.schoolFeeForm.limit,
             desc: this.schoolFeeForm.desc,
             link: this.schoolFeeForm.link,
             status: this.schoolFeeForm.status
@@ -171,6 +211,7 @@
           if (response.data.code === '200') {
             current.initSchoolFeeListData(current.schoolFeeListData)
             current.schoolFeeModal = false
+            current.schoolFeeForm = []
             current.messageRemind('success', response.data.message)
           }
         }).catch(function (error) {
@@ -196,13 +237,21 @@
     margin-bottom: 30px;
   }
 
-  .comtent-list {
-    max-height: calc(100vh - 230px);
-    overflow: scroll;
-  }
+  /*.comtent-list {*/
+  /*max-height: calc(100vh - 230px);*/
+  /*overflow: scroll;*/
+  /*}*/
 
   .comtent-paging {
     float: right;
     padding-top: 30px;
+  }
+
+  .submit-button {
+    width: 100%;
+    float: right;
+    background-color: #31a7ff;
+    color: #ffffff;
+    border: 0px solid #ffffff
   }
 </style>
