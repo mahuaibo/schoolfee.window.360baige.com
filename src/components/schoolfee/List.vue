@@ -2,7 +2,7 @@
   .el-dialog {
     width: 456px;
     .el-dialog__body {
-      padding: 6px 8px 6px 0px;
+      padding: 12px 8px 6px 0px;
     }
     .el-form-item {
       margin: 14px 14px 20px 14px;
