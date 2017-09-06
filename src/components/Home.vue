@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <div class="layout-sidebar-header">
-      <img class="header-left-image" src="../assets/logo.png" height="60" width="60"/>
+      <img class="header-left-image" src="../assets/logo.png" height="38"/>
     </div>
     <div class="layout-container">
       <router-view></router-view>
@@ -33,15 +33,17 @@
 <style lang="scss" scoped>
   .layout {
     .layout-sidebar-header {
-      background: #324157;
+      background: #002f5c;
       height: 78px;
       width: 100%;
       min-width: 1080px;
       position: absolute;
       left: 0;
       .header-left-image {
-        float: left;
-        padding-left: 192px;
+        position: absolute;
+        left: 192px;
+        margin-top: 20px;
+        vertical-align: middle;
       }
     }
 

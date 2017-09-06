@@ -16,14 +16,11 @@
         <u style="text-decoration: none;">{{ projectName }}</u>
       </div>
       <div class="content-head-right">
-        <el-upload class="upload-demo" name="uploadFile" accept=".xlsx"
-                   :action="publicParameters.path + uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
+        <el-upload class="upload-demo" name="uploadFile" accept=".xlsx" :action="publicParameters.path + uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
           <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;"
                      v-if="this.$route.query.is==0">上传名单
           </el-button>
-          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
-
-          </el-button>
+          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单</el-button>
           <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
       </div>
