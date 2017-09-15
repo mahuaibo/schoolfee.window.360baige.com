@@ -86,7 +86,7 @@
                      :total="schoolFeeListData.total">
       </el-pagination>
     </div>
-    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false">
+    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false" :close-on-click-modal="false">
       <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px"
                style="padding:0px 10px 0px 0px;">
         <el-form-item label="项目名称:" prop="name">
@@ -100,7 +100,7 @@
           <el-input type="text" v-model="schoolFeeForm.link" placeholder="请输入描述连接..."></el-input>
         </el-form-item>
         <el-form-item label="限制缴费:" prop="limit">
-          <el-select v-model="schoolFeeForm.limit" placeholder="请选择..." style="width: 100%">
+          <el-select v-model="schoolFeeForm.isLimit" placeholder="请选择..." style="width: 100%">
             <el-option label="否" value="1"></el-option>
             <el-option label="是" value="0"></el-option>
           </el-select>
@@ -122,7 +122,7 @@
 <script>
   import axios from 'axios'
   import router from '../.././router'
-  import { mapGetters, mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
 
   export default {
     created () {
@@ -144,7 +144,7 @@
           name: null,
           desc: null,
           link: null,
-          limit: '1',
+          isLimit: '1',
           status: '0'
         },
         schoolFeeListData: {
@@ -171,7 +171,9 @@
       },
       // 新增收费项目
       addSchoolFee () {
-        this.schoolFeeForm = {}
+        this.schoolFeeForm = []
+        this.schoolFeeForm.isLimit = '1'
+        this.schoolFeeForm.status = '0'
         this.dialogTitle = '新增'
         this.schoolFeeForm.url = this.publicParameters.path + '/project/add'
         this.schoolFeeModal = true
@@ -180,11 +182,8 @@
       schoolFeeModify (index) {
         this.dialogTitle = '修改'
         this.schoolFeeForm.url = this.publicParameters.path + '/project/modify'
-        this.schoolFeeForm.id = index.id
-        this.schoolFeeForm.name = index.name
-        this.schoolFeeForm.limit = index.isLimit + ''
-        this.schoolFeeForm.desc = index.desc
-        this.schoolFeeForm.link = index.link
+        this.schoolFeeForm = index
+        this.schoolFeeForm.isLimit = index.isLimit + ''
         this.schoolFeeForm.status = index.status + ''
         this.schoolFeeModal = true
       },
@@ -203,7 +202,7 @@
             accessToken: localStorage.getItem('accessToken'),
             id: this.schoolFeeForm.id,
             name: this.schoolFeeForm.name,
-            isLimit: this.schoolFeeForm.limit,
+            isLimit: this.schoolFeeForm.isLimit,
             desc: this.schoolFeeForm.desc,
             link: this.schoolFeeForm.link,
             status: this.schoolFeeForm.status

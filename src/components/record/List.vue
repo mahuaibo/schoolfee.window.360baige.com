@@ -83,7 +83,7 @@
                      :total="recordListData.total">
       </el-pagination>
     </div>
-    <el-dialog title="下载筛选" :visible.sync="recordModal" @click="this.recordModal = false">
+    <el-dialog title="下载筛选" :visible.sync="recordModal" @click="this.recordModal = false" :close-on-click-modal="false">
       <el-form :model="recordForm" ref="recordForm" label-width="100px">
         <el-form-item label="班级:" prop="limit">
           <el-select v-model="recordForm.classNames" multiple placeholder="请选择" style="width:100%">
@@ -109,7 +109,6 @@
   import axios from 'axios'
   import router from '../.././router'
   import { mapGetters, mapActions } from 'vuex'
-
   export default {
     created () {
       this.initRecordListData(this.recordListData)
@@ -122,7 +121,7 @@
     },
     data () {
       return {
-        projectName: this.$route.query.n + ':名单',
+        projectName: this.$route.query.n + '：名单',
         ids: [],
         uploadUrl: '/record/upload?accessToken=' + localStorage.getItem('accessToken') + '&projectId=' + this.$route.query.i,
         recordListData: {
