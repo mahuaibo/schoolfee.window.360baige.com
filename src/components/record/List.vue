@@ -16,11 +16,13 @@
         <u style="text-decoration: none;">{{ projectName }}</u>
       </div>
       <div class="content-head-right">
-        <el-upload class="upload-demo" name="uploadFile" accept=".xlsx" :action="publicParameters.path + uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
+        <el-upload class="upload-demo" name="uploadFile" accept=".xlsx" :action="publicParameters.path + uploadUrl"
+                   :show-file-list="false" :on-success="uploadSuccess">
           <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;"
                      v-if="this.$route.query.is==0">上传名单
           </el-button>
-          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单</el-button>
+          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
+          </el-button>
           <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
       </div>
@@ -89,10 +91,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="缴费项:" prop="limit">
+        <el-form-item label="是否缴费:" prop="limit">
           <el-select v-model="recordForm.isLimit" placeholder="请选择..." style="width: 100%" multiple>
-            <el-option label="已缴费" value="0"></el-option>
-            <el-option label="未交费" value="1"></el-option>
+            <el-option label="已缴费" value="1"></el-option>
+            <el-option label="未交费" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -106,7 +108,8 @@
 <script>
   import axios from 'axios'
   import router from '../.././router'
-  import {mapGetters, mapActions} from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
+
   export default {
     created () {
       this.initRecordListData(this.recordListData)
@@ -176,7 +179,7 @@
         if (this.recordForm.isLimit.length === 0) {
           this.messageRemind('warning', '请选择缴费项！')
         }
-        window.open(this.publicParameters.path + '/record/download?accessToken=' + localStorage.getItem('accessToken') + '&classNames=' + this.recordForm.classNames.join(',') + '&isFees=' + this.recordForm.isLimit.join(','))
+        window.open(this.publicParameters.path + '/record/download?accessToken=' + localStorage.getItem('accessToken') + '&projectId=' + this.recordListData.projectId + '&classNames=' + this.recordForm.classNames.join(',') + '&isFees=' + this.recordForm.isLimit.join(','))
         this.recordModal = false
         this.recordForm.classNames = []
         this.recordForm.isLimit = []
@@ -234,7 +237,7 @@
         }
         return ids
       },
-      messageRemind  (type, info) { // type success成功   warning警告   error失败
+      messageRemind (type, info) { // type success成功   warning警告   error失败
         this.$message({message: info, type: type})
         return false
       }

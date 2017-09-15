@@ -101,8 +101,8 @@
         </el-form-item>
         <el-form-item label="限制缴费:" prop="limit">
           <el-select v-model="schoolFeeForm.limit" placeholder="请选择..." style="width: 100%">
-            <el-option label="是" value="0"></el-option>
             <el-option label="否" value="1"></el-option>
+            <el-option label="是" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="项目状态:" prop="status">
@@ -122,7 +122,8 @@
 <script>
   import axios from 'axios'
   import router from '../.././router'
-  import {mapGetters, mapActions} from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
+
   export default {
     created () {
       this.initSchoolFeeListData(this.schoolFeeListData)
@@ -170,6 +171,7 @@
       },
       // 新增收费项目
       addSchoolFee () {
+        this.schoolFeeForm = {}
         this.dialogTitle = '新增'
         this.schoolFeeForm.url = this.publicParameters.path + '/project/add'
         this.schoolFeeModal = true
@@ -211,14 +213,13 @@
           if (response.data.code === '200') {
             current.initSchoolFeeListData(current.schoolFeeListData)
             current.schoolFeeModal = false
-            current.schoolFeeForm = []
             current.messageRemind('success', response.data.message)
           }
         }).catch(function (error) {
           console.log(error)
         })
       },
-      messageRemind  (type, info) { // type success成功   warning警告   error失败
+      messageRemind (type, info) { // type success成功   warning警告   error失败
         this.$message({message: info, type: type})
         return false
       }
