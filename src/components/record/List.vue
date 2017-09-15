@@ -13,21 +13,20 @@
     <div class="content-head">
       <div class="content-head-left">
         <i class="el-icon-arrow-left" @click="returnRecordList">返回</i>
-        <u style="text-decoration: none;">{{ projectName }}</u>
+        <u class="content-head-poriectname">{{ projectName }}</u>
       </div>
       <div class="content-head-right">
         <el-upload class="upload-demo" name="uploadFile" accept=".xlsx" :action="publicParameters.path + uploadUrl"
                    :show-file-list="false" :on-success="uploadSuccess">
-          <el-button slot="trigger" type="primary" style="width:86px;height: 36px;margin-right: 20px;"
-                     v-if="this.$route.query.is==0">上传名单
+          <el-button slot="trigger" type="primary" class="content-head-upload" v-if="this.$route.query.is==0">
+            <span>上传名单</span>
           </el-button>
-          <el-button style="width:86px;height: 36px;margin-right: 8px;" type="primary" @click="downloadList">下载名单
-          </el-button>
-          <el-button style="width:86px;height: 36px;" type="primary" @click="deleteRecord">删除</el-button>
         </el-upload>
+        <el-button class="content-head-download" type="primary" @click="downloadList">下载名单</el-button>
+        <el-button class="content-head-delete" type="primary" @click="deleteRecord">删除</el-button>
       </div>
     </div>
-    <div class="comtent-list" style="text-align: center">
+    <div class="comtent-list">
       <el-table :data="recordData.list" @selection-change="setIds" max-height="510">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="创建时间" width="160">
@@ -98,7 +97,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button style="width:100%;float: right;" @click="downloadSubmit">下载</el-button>
+          <el-button class="download-button" @click="downloadSubmit">下载</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -108,7 +107,7 @@
 <script>
   import axios from 'axios'
   import router from '../.././router'
-  import { mapGetters, mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     created () {
       this.initRecordListData(this.recordListData)
@@ -256,16 +255,43 @@
       float: left;
       height: 36px;
       line-height: 36px;
+      .content-head-poriectname {
+        text-decoration: none;
+      }
     }
     .content-head-right {
       float: right;
+      .upload-demo {
+        display: inline;
+        .content-head-upload {
+          width: 86px;
+          height: 36px;
+          margin-right: 20px;
+        }
+      }
+      .content-head-download {
+        width: 86px;
+        height: 36px;
+        margin-right: 8px;
+      }
+      .content-head-delete {
+        width: 86px;
+        height: 36px;
+      }
     }
   }
 
-  /*.comtent-list {*/
-  /*max-height: calc(100vh - 230px);*/
-  /*overflow: scroll;*/
-  /*}*/
+  .download-button {
+    width: 100%;
+    float: right;
+    background-color: #31a7ff;
+    color: #ffffff;
+    border: 0px solid #ffffff;
+  }
+
+  .comtent-list {
+    text-align: center;
+  }
 
   .comtent-paging {
     float: right;
