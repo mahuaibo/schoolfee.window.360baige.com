@@ -47,14 +47,13 @@
                      :total="schoolFeeListData.total">
       </el-pagination>
     </div>
-    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="schoolFeeModal = false"
-               :close-on-click-modal="false">
+    <el-dialog :visible.sync="schoolFeeModal" :close-on-click-modal="false">
       <div class="close-button-vessel">
-        <span>新增</span>
+        <span>{{ dialogTitle }}</span>
         <img src="../../assets/white-close.png" width="10" class="close-button" @click="schoolFeeModal=false">
       </div>
-      <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px"
-               class="school-fee-form" >
+      <el-form :model="schoolFeeForm" ref="schoolFeeForm" :rules="schoolFeeRule" label-width="100px"
+               class="school-fee-form">
         <el-form-item label="项目名称:" prop="name">
           <el-input type="text" placeholder="请输入项目名称..." v-model="schoolFeeForm.name"></el-input>
         </el-form-item>
@@ -65,7 +64,7 @@
         <el-form-item label="描述连接:" prop="link">
           <el-input type="text" v-model="schoolFeeForm.link" placeholder="请输入描述连接..."></el-input>
         </el-form-item>
-        <el-form-item label="限制缴费:" prop="limit">
+        <el-form-item label="限制缴费:" prop="isLimit">
           <el-select v-model="schoolFeeForm.isLimit" placeholder="请选择..." style="width: 100%">
             <el-option label="否" value="1"></el-option>
             <el-option label="是" value="0"></el-option>
@@ -103,7 +102,7 @@
     data () {
       return {
         schoolFeeModal: false,
-        dialogTitle: '标题',
+        dialogTitle: '',
         schoolFeeForm: {
           url: null,
           id: null,
@@ -137,7 +136,7 @@
       },
       // 新增收费项目
       addSchoolFee () {
-        this.schoolFeeForm = []
+        this.schoolFeeForm = {}
         this.schoolFeeForm.isLimit = '1'
         this.schoolFeeForm.status = '0'
         this.dialogTitle = '新增'
