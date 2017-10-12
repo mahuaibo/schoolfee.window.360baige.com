@@ -9,13 +9,13 @@ Vue.use(Router)
 
 export default new Router({
   routes: [{
-    path: '/',
-    redirect: '/schoolfee/list'
-  }, {
     name: 'home',
     component: Home,
     path: '/home',
     alias: '',
+    redirect: {
+      name: 'schoolfee/list'
+    },
     children: [{
       name: 'schoolfee/list',
       component: SchoolfeeList,

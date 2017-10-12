@@ -1,7 +1,8 @@
 <template>
   <div class="layout">
     <div class="layout-sidebar-header">
-      <img class="header-left-image" src="../assets/logo.png" height="38"/>
+      <common-header></common-header>
+      <!--<img class="header-left-image" src="../assets/logo.png" height="38"/>-->
     </div>
     <div class="layout-container">
       <router-view></router-view>
@@ -28,39 +29,34 @@
   }
 
 </script>
+
 <style lang="scss">
   .el-dialog {
-    width: 456px;
-    .el-dialog__body {
-      padding: 12px 8px 6px 0px;
+    top: 25% !important;
+    width: 390px !important;
+    border-radius: 4px;
+    padding: 0px !important;
+    .el-dialog__header {
+      display: none;
     }
-    .el-form-item {
-      margin: 14px 14px 20px 14px;
+    .el-dialog__body {
+      padding: 0px !important;
+      .el-form-item__content {
+        width: 318px;
+        .el-input__inner {
+          border: 0px;
+        }
+      }
     }
   }
 
-  .el-dialog__header {
-    background-color: #31a7ff;
-    padding: 0px;
-    margin: 0px;
-    height: 55px;
-    line-height: 60px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    text-align: left;
-    padding-left: 20px;
-    .el-dialog__title {
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: normal;
-    }
-    .el-dialog__headerbtn {
-      padding-top: 20px;
-      padding-right: 20px;
-      .el-icon-close {
-        color: #ffffff;
-      }
-    }
+  .el-dialog .el-dialog__body .el-form-item__content {
+    width: auto;
+  }
+
+  .el-textarea__inner {
+    border: 0px solid #000;
+    padding: 3px 10px;
   }
 
   .el-table th {

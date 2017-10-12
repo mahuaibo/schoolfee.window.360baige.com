@@ -9,7 +9,9 @@ Vue.use(Vuex)
 
 const state = {
   publicParameters: {
-    path: 'http://192.168.0.101:30000/cloud/window/schoolFee/v1'
+    path: 'http://192.168.0.101:30000/cloud/window/schoolFee/v1',
+    loginModel: false,
+    headType: 0
   },
   schoolFeeData: {
     list: []

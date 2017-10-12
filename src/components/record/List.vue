@@ -1,13 +1,3 @@
-<style>
-  .el-table th {
-    text-align: center;
-  }
-
-  .el-checkbox__inner {
-    width: 14px;
-    height: 14px;
-  }
-</style>
 <template>
   <div class="index">
     <div class="content-head">
@@ -82,8 +72,12 @@
                      :total="recordListData.total">
       </el-pagination>
     </div>
-    <el-dialog title="下载筛选" :visible.sync="recordModal" @click="this.recordModal = false" :close-on-click-modal="false">
-      <el-form :model="recordForm" ref="recordForm" label-width="100px">
+    <el-dialog title="下载筛选" :visible.sync="recordModal" :close-on-click-modal="false">
+      <div class="close-button-vessel">
+        <span>下载名单</span>
+        <img src="../../assets/white-close.png" width="10" class="close-button" @click="recordModal=false">
+      </div>
+      <el-form :model="recordForm" ref="recordForm" label-width="100px" class="record-form">
         <el-form-item label="班级:" prop="limit">
           <el-select v-model="recordForm.classNames" multiple placeholder="请选择" style="width:100%">
             <el-option v-for="item in recordData.classList" :key="item.value" :label="item.value" :value="item.value">
@@ -129,13 +123,6 @@
           current: 1,
           total: 1
         },
-        options: [{
-          value: '一年级'
-        }, {
-          value: '二年级'
-        }, {
-          value: '三年级'
-        }],
         recordModal: false,
         recordForm: {
           classNames: [],
@@ -303,5 +290,24 @@
     margin-right: 20px;
     color: #20a0ff;
     cursor: pointer;
+  }
+
+  .record-form {
+    padding: 0px;
+    margin-right: 15px;
+  }
+  .close-button-vessel {
+    background: #4db3ff;
+    padding: 15px;
+    margin-bottom: 22px;
+    text-align: right;
+    span {
+      float: left;
+      color: #ffffff;
+      font-size: 16px;
+    }
+    .close-button {
+      cursor: pointer;
+    }
   }
 </style>

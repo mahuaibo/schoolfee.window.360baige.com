@@ -5,7 +5,7 @@
     </div>
     <div class="comtent-list" style="text-align: center;">
       <el-table :data="schoolFeeData.list" max-height="510">
-        <el-table-column label="创建时间" width="160">
+        <el-table-column label="创建时间" width="180">
           <template scope="scope">
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
           </template>
@@ -47,9 +47,14 @@
                      :total="schoolFeeListData.total">
       </el-pagination>
     </div>
-    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="this.schoolFeeModal = false" :close-on-click-modal="false">
+    <el-dialog :title="dialogTitle" :visible.sync="schoolFeeModal" @click="schoolFeeModal = false"
+               :close-on-click-modal="false">
+      <div class="close-button-vessel">
+        <span>新增</span>
+        <img src="../../assets/white-close.png" width="10" class="close-button" @click="schoolFeeModal=false">
+      </div>
       <el-form :model="schoolFeeForm" :rules="schoolFeeRule" ref="schoolFeeForm" label-width="100px"
-               style="padding:0px 10px 0px 0px;">
+               class="school-fee-form" >
         <el-form-item label="项目名称:" prop="name">
           <el-input type="text" placeholder="请输入项目名称..." v-model="schoolFeeForm.name"></el-input>
         </el-form-item>
@@ -214,5 +219,25 @@
     background-color: #31a7ff;
     color: #ffffff;
     border: 0px solid #ffffff
+  }
+
+  .school-fee-form {
+    padding: 0px;
+    margin-right: 20px;
+  }
+
+  .close-button-vessel {
+    background: #4db3ff;
+    padding: 15px;
+    margin-bottom: 22px;
+    text-align: right;
+    span {
+      float: left;
+      color: #ffffff;
+      font-size: 16px;
+    }
+    .close-button {
+      cursor: pointer;
+    }
   }
 </style>
