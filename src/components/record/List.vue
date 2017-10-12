@@ -67,9 +67,9 @@
     </div>
     <div class="comtent-paging">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page.sync="recordListData.current" :page-sizes="[50, 100, 200]"
-                     :page-size="recordListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
-                     :total="recordListData.total">
+                     :current-page.sync="recordData.recordListData.current" :page-sizes="[50, 100, 200]"
+                     :page-size="recordData.recordListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                     :total="recordData.recordListData.total">
       </el-pagination>
     </div>
     <el-dialog title="下载筛选" :visible.sync="recordModal" :close-on-click-modal="false">
@@ -104,7 +104,8 @@
   import {mapGetters, mapActions} from 'vuex'
   export default {
     created () {
-      this.initRecordListData(this.recordListData)
+      this.recordData.recordListData.projectId = this.$route.query.i
+      this.initRecordListData(this.recordData.recordListData)
     },
     computed: {
       ...mapGetters([
@@ -117,12 +118,6 @@
         projectName: this.$route.query.n + '：名单',
         ids: [],
         uploadUrl: '/record/upload?accessToken=' + localStorage.getItem('accessToken') + '&projectId=' + this.$route.query.i,
-        recordListData: {
-          projectId: this.$route.query.i,
-          pageSize: 50,
-          current: 1,
-          total: 1
-        },
         recordModal: false,
         recordForm: {
           classNames: [],
@@ -150,11 +145,11 @@
           return
         }
         this.messageRemind('success', index.message)
-        this.initRecordListData(this.recordListData)
+        this.initRecordListData(this.recordData.recordListData)
       },
       // 下载名单
       downloadList () {
-        this.initClassListData(this.recordListData)
+        this.initClassListData(this.recordData.recordListData)
         this.recordModal = true
       },
       downloadSubmit () {
@@ -170,10 +165,10 @@
         this.recordForm.isLimit = []
       },
       handleSizeChange (val) {
-        this.initRecordListData(this.recordListData)
+        this.initRecordListData(this.recordData.recordListData)
       },
       handleCurrentChange (val) {
-        this.initRecordListData(this.recordListData)
+        this.initRecordListData(this.recordData.recordListData)
       },
       // 删除
       deleteRecord () {
@@ -194,7 +189,7 @@
               }
             }).then(function (response) {
               if (response.data.code === '200') {
-                current.initRecordListData(current.recordListData)
+                current.initRecordListData(current.recordData.recordListData)
                 current.messageRemind('success', response.data.message)
               }
             }).catch(function (error) {
@@ -296,6 +291,7 @@
     padding: 0px;
     margin-right: 15px;
   }
+
   .close-button-vessel {
     background: #4db3ff;
     padding: 15px;

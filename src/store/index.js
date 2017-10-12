@@ -14,11 +14,22 @@ const state = {
     headType: 0
   },
   schoolFeeData: {
-    list: []
+    list: [],
+    pageData: {
+      pageSize: 50,
+      current: 1,
+      total: 1
+    }
   },
   recordData: {
     list: [],
-    classList: []
+    classList: [],
+    recordListData: {
+      projectId: 0,
+      pageSize: 50,
+      current: 1,
+      total: 1
+    }
   }
 }
 

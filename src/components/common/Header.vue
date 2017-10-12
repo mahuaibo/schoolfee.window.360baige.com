@@ -98,7 +98,9 @@
     },
     computed: {
       ...mapGetters([
-        'publicParameters'
+        'publicParameters',
+        'schoolFeeData',
+        'recordData'
       ])
     },
     data () {
@@ -125,7 +127,8 @@
     },
     methods: {
       ...mapActions([
-        'handleClick'
+        'handleClick',
+        'initSchoolFeeListData'
       ]),
       getQueryString (name) {
         // 获取当前URL
@@ -177,8 +180,10 @@
               localStorage.removeItem('accessToken')
               localStorage.removeItem('head')
               localStorage.removeItem('username')
+              current.publicParameters.headType = 0
+              current.schoolFeeData.list = []
+              current.recordData.list = []
             }
-            current.publicParameters.headType = 0
           }).catch(function (error) {
             console.log(error)
           })
@@ -245,6 +250,7 @@
                 localStorage.setItem('accessToken', response.data.data.accessToken)
                 current.publicParameters.loginModel = false
                 current.publicParameters.headType = 1
+                current.initSchoolFeeListData(current.schoolFeeData.pageData)
               } else {
                 current.promptInfo('error', '登陆失败，请重新登陆！')
               }

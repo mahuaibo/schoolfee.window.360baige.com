@@ -42,9 +42,9 @@
     </div>
     <div class="comtent-paging">
       <el-pagination @size-change="pagingUpdatesData" @current-change="pagingUpdatesData"
-                     :current-page.sync="schoolFeeListData.current" :page-sizes="[50, 100, 200]"
-                     :page-size="schoolFeeListData.pageSize" layout="total, sizes, prev, pager, next, jumper"
-                     :total="schoolFeeListData.total">
+                     :current-page.sync="schoolFeeData.pageData.current" :page-sizes="[50, 100, 200]"
+                     :page-size="schoolFeeData.pageData.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                     :total="schoolFeeData.pageData.total">
       </el-pagination>
     </div>
     <el-dialog :visible.sync="schoolFeeModal" :close-on-click-modal="false">
@@ -91,7 +91,7 @@
 
   export default {
     created () {
-      this.initSchoolFeeListData(this.schoolFeeListData)
+      this.initSchoolFeeListData(this.schoolFeeData.pageData)
     },
     computed: {
       ...mapGetters([
@@ -112,11 +112,6 @@
           isLimit: '1',
           status: '0'
         },
-        schoolFeeListData: {
-          pageSize: 50,
-          current: 1,
-          total: 1
-        },
         schoolFeeRule: {
           name: [
             {required: true, message: '请填写名称!', trigger: 'blur'}
@@ -129,7 +124,7 @@
         'initSchoolFeeListData'
       ]),
       pagingUpdatesData (val) {
-        this.initSchoolFeeListData(this.schoolFeeListData)
+        this.initSchoolFeeListData(this.pageData)
       },
       filterTag (value, row) {
         return row.tag === value
@@ -175,7 +170,7 @@
         }).then(function (response) {
           console.log(response.data)
           if (response.data.code === '200') {
-            current.initSchoolFeeListData(current.schoolFeeListData)
+            current.initSchoolFeeListData(current.pageData)
             current.schoolFeeModal = false
             current.messageRemind('success', response.data.message)
           }
