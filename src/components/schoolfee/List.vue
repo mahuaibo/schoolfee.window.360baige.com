@@ -91,7 +91,10 @@
 
   export default {
     created () {
-      this.initSchoolFeeListData(this.schoolFeeData.pageData)
+      var accessToken = localStorage.getItem('accessToken')
+      if (accessToken !== null && typeof (accessToken) !== 'undefined') {
+        this.initSchoolFeeListData(this.schoolFeeData.pageData)
+      }
     },
     computed: {
       ...mapGetters([

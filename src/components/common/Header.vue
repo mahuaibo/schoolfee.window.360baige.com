@@ -6,7 +6,7 @@
     <div class="common-header-right">
       <div class="common-header-right-operation">
         <div v-if="publicParameters.headType==0">
-          <span @click="publicParameters.loginModel=true">登陆</span> | <span @click="registerAccount">注册</span>
+          <span @click="openChildWindow">登陆</span> | <span @click="registerAccount">注册</span>
         </div>
         <div class="common-header-right-operation-head" v-else>
           <img :src="publicParameters.head" width="30" class="user-head">
@@ -79,16 +79,8 @@
   import {mapGetters, mapActions} from 'vuex'
   export default {
     created () {
-      var code = this.getQueryString('code')
-      var state = this.getQueryString('state')
-      if (code !== undefined && code !== '' && code !== null) {
-        if (state.indexOf('qq') >= 0) {
-          this.thirdPartyLogin(code, 2)
-        } else {
-          this.thirdPartyLogin(code, 1)
-        }
-      }
-      if (localStorage.getItem('accessToken') === null) {
+      var accessToken = localStorage.getItem('accessToken')
+      if (accessToken === null || typeof (accessToken) === 'undefined') {
         this.publicParameters.headType = 0
       } else {
         this.publicParameters.headType = 1
@@ -163,6 +155,46 @@
           this.quit = 1
         }
       },
+      openChildWindow () {
+        document.getElementById('loginFrame').style.display = 'table'
+        var current = this
+        var timing = window.setInterval(function () {
+          if (localStorage.getItem('accessToken') !== null || document.getElementById('loginFrame').style.display === 'none') {
+            clearInterval(timing)
+          }
+          current.authorizeLogin(timing)
+        }, 3000)
+      },
+      authorizeLogin (timing) {
+        var current = this
+        axios({
+          method: 'POST',
+          url: current.publicParameters.loginDomain + '/userPosition/authorize',
+          params: {
+            redirectUri: window.location.origin
+          }
+        }).then(function (response) {
+          console.log(response.data)
+          if (response.data.code === '200') {
+            localStorage.setItem('head', response.data.data.head)
+            localStorage.setItem('username', response.data.data.username)
+            localStorage.setItem('accessToken', response.data.data.accessToken)
+            current.publicParameters.head = response.data.data.head
+            current.publicParameters.username = response.data.data.username
+            current.publicParameters.headType = 1
+            clearInterval(timing)
+            document.getElementById('loginFrame').style.display = 'none'
+          } else if (response.data.code === '700') {
+            console.log('等待登陆')
+          } else {
+            current.promptInfo('error', response.data.message)
+            clearInterval(timing)
+            document.getElementById('loginFrame').style.display = 'none'
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      },
       logout () {
         this.$confirm('确认退出吗?', '提示', {
           confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'
@@ -170,16 +202,14 @@
           var current = this
           axios({
             method: 'POST',
-            url: this.publicParameters.path + '/user/logout',
+            url: this.publicParameters.loginDomain + '/user/logout',
             params: {
               access_token: localStorage.getItem('accessTicket')
             }
           }).then(function (response) {
             console.log(response.data)
             if (response.data.code === '200') {
-              localStorage.removeItem('accessToken')
-              localStorage.removeItem('head')
-              localStorage.removeItem('username')
+              localStorage.clear()
               current.publicParameters.headType = 0
               current.schoolFeeData.list = []
               current.recordData.list = []
@@ -193,101 +223,6 @@
       },
       registerAccount () {
         window.open('http://admin.window.360baige.com/#/admin/register')
-      },
-      // 账号登陆
-      submitForm (formName) {
-        console.log(this.publicParameters.loginModel)
-        console.log(this.publicParameters.path)
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            var current = this
-            axios({
-              method: 'POST',
-              url: this.publicParameters.path + '/user/login',
-              params: {
-                username: this.loginForm.username,
-                password: this.loginForm.password
-              }
-            }).then(function (response) {
-              console.log(response.data)
-              if (response.data.code === '200') { // 登录成功保存cookie
-                localStorage.setItem('username', response.data.data.username)
-                localStorage.setItem('head', response.data.data.head)
-                current.publicParameters.head = response.data.data.head
-                current.publicParameters.username = response.data.data.username
-                current.getUserPositionList(response.data.data.accessTicket)
-              } else {
-                current.promptInfo('error', '用户名密码错误！')
-              }
-            }).catch(function (error) {
-              console.log(error)
-            })
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
-      },
-      getUserPositionList (accessTicket) {
-        var current = this
-        axios({
-          method: 'POST',
-          url: this.publicParameters.path + '/userPosition/list',
-          params: {accessValue: accessTicket}
-        }).then(function (response) {
-          console.log(response.data)
-          if (response.data.code === '200') {
-            axios({
-              method: 'POST',
-              url: current.publicParameters.path + '/userPosition/getAccessToken',
-              params: {
-                accessValue: accessTicket,
-                userPositionId: response.data.data[0].userPositionId
-              }
-            }).then(function (response) {
-              console.log(response.data)
-              if (response.data.code === '200') {
-                localStorage.setItem('accessToken', response.data.data.accessToken)
-                current.publicParameters.loginModel = false
-                current.publicParameters.headType = 1
-                current.initSchoolFeeListData(current.schoolFeeData.pageData)
-              } else {
-                current.promptInfo('error', '登陆失败，请重新登陆！')
-              }
-            }).catch(function (error) {
-              console.log(error)
-            })
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
-      },
-      // 获取微信用户绑定转态
-      thirdPartyLogin (code, type) {
-        var current = this
-        axios({
-          method: 'POST',
-          url: this.publicParameters.path + '/user/thirdPartyLogin',
-          params: {code: code, loginType: type}
-        }).then(function (response) {
-          console.log(response.data)
-          if (response.data.code === '200') { // 登录成功保存cookie
-            localStorage.setItem('username', response.data.data.username)
-            localStorage.setItem('head', response.data.data.head)
-            localStorage.setItem('accessTicket', response.data.data.accessTicket)
-            current.publicParameters.identityListDialog = true
-          } else if (response.data.code === '600') { // 账号未绑定转到绑定
-            window.open('http://admin.window.360baige.com/#/admin/bindAccount')
-            localStorage.setItem('openType', response.data.data.openType)
-            localStorage.setItem('openId', response.data.data.openId)
-          } else { // 非法操作返回登录页
-            current.promptInfo('warning', '非法操作！')
-            window.location.href = '#/homePage'
-            current.publicParameters.loginModel = true
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
       },
       promptInfo (type, info) { // type success成功   warning警告   error失败
         this.$message({message: info, type: type})
